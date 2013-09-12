@@ -1,0 +1,1 @@
+{"Event":{"occurrenceTime":%s, "type":"cz.muni.fi.ngmon.Namespace#%s", "host":"%s", "_": {"schema":"http://www.fi.muni.cz/events/namespace.jsch", "value1":"%s", "value2":%s}, "application": "cz.muni.fi.noapp.DummyApp", "level":3}}
