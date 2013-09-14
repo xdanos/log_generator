@@ -1,0 +1,1 @@
+{"Event":{"occurrenceTime":%s, "type":"org.ssh.Daemon#Login", "host":"%s", "_": {"schema":"http://www.ssh.org/events/daemon.jsch", "success":%s, "sourceHost":"%s", "sourcePort":%s, "user":"%s"}, "application":"org.ssh.ServerImpl", "level":3}}

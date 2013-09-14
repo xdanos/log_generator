@@ -1,0 +1,23 @@
+<configuration>
+
+	<appender name="jel_file" class="ch.qos.logback.core.FileAppender">
+		<file>logs/jel.log</file>
+		<append>false</append>
+		<encoder>
+			<pattern>%m%n</pattern>
+		</encoder>
+	</appender>
+	<logger name="org.ngmon.JEL" additivity="false" level="DEBUG">
+		<appender-ref ref="jel_file"/>
+	</logger>
+
+	<appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>[%c{1}] - %m%n</pattern>
+		</encoder>
+	</appender>
+	<root level="ERROR">
+		<appender-ref ref="Console"/>
+	</root>
+
+</configuration>
