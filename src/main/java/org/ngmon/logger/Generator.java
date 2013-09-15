@@ -1,22 +1,35 @@
 package org.ngmon.logger;
 
-import org.ngmon.logger.util.TestUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.Date;
 import java.util.Random;
 import java.util.UUID;
 
+import org.ngmon.logger.util.TestUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class Generator {
+	
+	private enum OUTPUT_TYPE {LOG, SOCKET}
+	private static final OUTPUT_TYPE outputType = OUTPUT_TYPE.LOG;
 
 	static InputStream LOGIN_EVENT = Generator.class.getResourceAsStream("event1.json");
 	private static String loginLine;
 
 	static InputStream DUMMY_EVENT = Generator.class.getResourceAsStream("dummyevent.json");
 	private static String dummyLine;
+	
+	private static final int port = 4747;
+	private static ServerSocket serverSocket;
+	private static Socket socket;
+	//private static PrintWriter printWriter;
+	private static BufferedOutputStream bufferedOutputStream;
 
 	private static Random randomINT = new Random(System.currentTimeMillis());
 
@@ -84,11 +97,29 @@ public class Generator {
 		return String.format(dummyLine, timestamp, "event_" + getNextString(2), getNextIp(), getNextString(16), randomINT.nextInt(1000)+1);
 	}
 
-	static void output(String string) {
-		LOGBACK_LOGGER.debug(string);
+	static void output(String string) throws IOException {
+		switch (outputType) {
+		case LOG:
+			LOGBACK_LOGGER.debug(string);
+			break;
+		case SOCKET:
+			//printWriter.println(string);
+			bufferedOutputStream.write(string.getBytes());
+			bufferedOutputStream.write("\n".getBytes());
+			break;
+		}
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
+		
+		if (outputType.equals(OUTPUT_TYPE.SOCKET)) {
+			serverSocket = new ServerSocket(port);
+			System.out.println("Waiting for client to connect...");
+			socket = serverSocket.accept();
+			//printWriter = new PrintWriter(socket.getOutputStream(), true);
+			bufferedOutputStream = new BufferedOutputStream(socket.getOutputStream());
+			System.out.println("Client connected");
+		}
 
 		System.out.println(new Date(lasttime));
 
@@ -129,6 +160,12 @@ public class Generator {
 		}
 
 		System.out.println(new Date(lasttime));
+		
+		if (outputType.equals(OUTPUT_TYPE.SOCKET)) {
+			//printWriter.close();
+			bufferedOutputStream.close();
+			serverSocket.close();
+		}
 	}
 
 }
